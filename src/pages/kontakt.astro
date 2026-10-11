@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { kontakt } from '../data/site';
+import pSpiegel from '../assets/seiten/p-spiegel.jpg';
+---
+
+<Base titel="Kontakt">
+  <section class="seitenkopf">
+    <div class="inhalt kontakt">
+      <div>
+        <span class="ueberzeile">Kontakt</span>
+        <h1>Arbeiten auch auf Anfrage.</h1>
+        <p class="einleitung">Besichtigungen nach telefonischer Absprache.</p>
+
+        <dl>
+          <dt>Adresse</dt>
+          <dd>{kontakt.name}<br />{kontakt.strasse}<br />{kontakt.ort}</dd>
+          <dt>Telefon</dt>
+          <dd>{kontakt.telefon.map((t) => (<><a href={t.href}>{t.anzeige}</a><br /></>))}</dd>
+          <dt>E-Mail</dt>
+          <dd><a href={`mailto:${kontakt.email}`}>{kontakt.email}</a></dd>
+        </dl>
+
+        <a class="knopf" href={`mailto:${kontakt.email}?subject=${encodeURIComponent('Anfrage über carsten-wippermann.de')}`}>E-Mail schreiben</a>
+      </div>
+      <div class="bild einblenden">
+        <Image src={pSpiegel} alt="Lichtobjekt mit Gesichtsprofilen hinter Spiegelglas" width={900} quality={80} loading="eager" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .kontakt {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 420px);
+    gap: clamp(32px, 7vw, 100px);
+    align-items: start;
+    padding-bottom: clamp(56px, 9vw, 112px);
+  }
+  dl {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 18px 24px;
+    margin: 2.5rem 0;
+  }
+  dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-leise);
+    padding-top: 0.3em;
+  }
+  dd {
+    margin: 0;
+  }
+  .bild :global(img) {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+  @media (max-width: 760px) {
+    .kontakt {
+      grid-template-columns: 1fr;
+    }
+    dl {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    dd {
+      margin-bottom: 14px;
+    }
+  }
+</style>

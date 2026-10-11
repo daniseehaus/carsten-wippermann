@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import { ausstellungen } from '../data/site';
+---
+
+<Base titel="Ausstellungen">
+  <section class="seitenkopf">
+    <div class="inhalt schmal">
+      <span class="ueberzeile">Ausstellungen</span>
+      <h1>Ausstellungen seit {Math.min(...ausstellungen.map((a) => a.jahr))}</h1>
+    </div>
+  </section>
+  <section class="abschnitt" style="padding-top: 0">
+    <div class="inhalt schmal">
+      <ol class="liste">
+        {ausstellungen.map((a) => (
+          <li class="einblenden">
+            <span class="jahr">{a.jahr}</span>
+            <span class="titel">{a.titel}</span>
+            <span class="ort leise">{a.ort}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--linie);
+  }
+  li {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr auto;
+    gap: 8px 24px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--linie);
+    align-items: baseline;
+  }
+  .jahr {
+    color: var(--akzent);
+    font-size: 0.85rem;
+  }
+  .ort {
+    font-size: 0.85rem;
+    text-align: right;
+  }
+  @media (max-width: 600px) {
+    li {
+      grid-template-columns: 3.5rem 1fr;
+    }
+    .ort {
+      grid-column: 2;
+      text-align: left;
+    }
+  }
+</style>

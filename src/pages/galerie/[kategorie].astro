@@ -1,0 +1,64 @@
+---
+import Base from '../../layouts/Base.astro';
+import Galerie from '../../components/Galerie.astro';
+import { kategorien, type Kategorie } from '../../data/site';
+import { bilderVon } from '../../lib/galerie';
+import { url } from '../../lib/url';
+
+export function getStaticPaths() {
+  return kategorien.map((k) => ({ params: { kategorie: k.slug }, props: { k } }));
+}
+
+const { k } = Astro.props as { k: Kategorie };
+const bilder = bilderVon(k.slug);
+const index = kategorien.indexOf(k);
+const naechste = kategorien[(index + 1) % kategorien.length];
+---
+
+<Base titel={k.titel} beschreibung={k.text[0]}>
+  <section class="seitenkopf">
+    <div class="inhalt">
+      <a class="zurueck" href={url('/galerie')}>← Galerie</a>
+      <span class="ueberzeile">0{index + 1} · {bilder.length} Bilder</span>
+      <h1>{k.titel}</h1>
+      <p class="einleitung">{k.text[0]}</p>
+    </div>
+  </section>
+
+  <section class="abschnitt" style="padding-top: 0">
+    <div class="inhalt">
+      <Galerie bilder={bilder} alt={k.titel} />
+      <div class="naechste">
+        <span class="leise">Weiter zu</span>
+        <a href={url(`/galerie/${naechste.slug}`)}>{naechste.titel} →</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .zurueck {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-leise);
+    text-decoration: none;
+    margin-bottom: 1.6rem;
+  }
+  .naechste {
+    margin-top: clamp(48px, 8vw, 96px);
+    padding-top: 32px;
+    border-top: 1px solid var(--linie);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .naechste span {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .naechste a {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    text-decoration: none;
+  }
+</style>

@@ -1,0 +1,149 @@
+---
+import { fuerGalerie, type Bild } from '../lib/galerie';
+
+interface Props {
+  bilder: Bild[];
+  alt: string;
+}
+
+const { bilder, alt } = Astro.props;
+const eintraege = await fuerGalerie(bilder);
+---
+
+<div class="galerie">
+  {eintraege.map((b, i) => {
+    const unterschrift = [b.titel, b.details].filter(Boolean).join(' · ');
+    return (
+      <a
+        class="kachel"
+        href={b.gross}
+        data-pswp-width={b.breite}
+        data-pswp-height={b.hoehe}
+        data-unterschrift={unterschrift}
+        style={`aspect-ratio: ${b.bild.width} / ${b.bild.height}`}
+      >
+        <img
+          src={b.vorschau}
+          width={b.bild.width}
+          height={b.bild.height}
+          alt={b.titel || `${alt}, Bild ${i + 1}`}
+          loading={i < 6 ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+        {b.titel && (
+          <span class="beschriftung">
+            <span class="titel">{b.titel}</span>
+            {b.details && <span class="details">{b.details}</span>}
+          </span>
+        )}
+      </a>
+    );
+  })}
+</div>
+
+<script>
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+  import 'photoswipe/style.css';
+
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: '.galerie',
+    children: 'a.kachel',
+    pswpModule: () => import('photoswipe'),
+    bgOpacity: 0.96,
+    showHideAnimationType: 'fade',
+    closeTitle: 'Schließen',
+    zoomTitle: 'Zoomen',
+    arrowPrevTitle: 'Zurück',
+    arrowNextTitle: 'Weiter',
+    errorMsg: 'Das Bild kann nicht geladen werden.',
+  });
+
+  lightbox.on('uiRegister', () => {
+    lightbox.pswp!.ui!.registerElement({
+      name: 'unterschrift',
+      order: 9,
+      isButton: false,
+      appendTo: 'root',
+      onInit: (el, pswp) => {
+        pswp.on('change', () => {
+          const kachel = pswp.currSlide?.data.element as HTMLElement | undefined;
+          el.textContent = kachel?.dataset.unterschrift ?? '';
+        });
+      },
+    });
+  });
+
+  lightbox.init();
+</script>
+
+<style>
+  .galerie {
+    columns: 3 300px;
+    column-gap: 14px;
+  }
+  .kachel {
+    position: relative;
+    display: block;
+    margin-bottom: 14px;
+    break-inside: avoid;
+    overflow: hidden;
+    background: var(--flaeche);
+    text-decoration: none;
+  }
+  .kachel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s;
+  }
+  .kachel:hover img {
+    transform: scale(1.035);
+  }
+  .beschriftung {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 40px 16px 14px;
+    background: linear-gradient(transparent, rgb(0 0 0 / 0.75));
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s, transform 0.35s;
+  }
+  .kachel:hover .beschriftung,
+  .kachel:focus-visible .beschriftung {
+    opacity: 1;
+    transform: none;
+  }
+  .titel {
+    font-size: 0.9rem;
+    color: #fff;
+  }
+  .details {
+    font-size: 0.75rem;
+    color: rgb(255 255 255 / 0.7);
+  }
+  @media (hover: none) {
+    .beschriftung {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  :global(.pswp__unterschrift) {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    max-width: calc(100% - 32px);
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    color: #fff;
+    text-align: center;
+    background: rgb(0 0 0 / 0.45);
+    pointer-events: none;
+  }
+  :global(.pswp__unterschrift:empty) {
+    display: none;
+  }
+</style>

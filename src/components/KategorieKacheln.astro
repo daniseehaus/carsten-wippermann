@@ -1,0 +1,68 @@
+---
+import { Image } from 'astro:assets';
+import { kategorien } from '../data/site';
+import { bildNamens } from '../lib/galerie';
+import { url } from '../lib/url';
+---
+
+<div class="kacheln">
+  {kategorien.map((k, i) => (
+    <a class="kategorie einblenden" href={url(`/galerie/${k.slug}`)} style={`transition-delay: ${i * 90}ms`}>
+      <div class="bild">
+        <Image src={bildNamens(k.slug, k.titelbild)} alt={k.titel} width={800} quality={80} />
+      </div>
+      <span class="nummer">0{i + 1}</span>
+      <h3>{k.titel}</h3>
+      <p class="leise">{k.kurz}</p>
+    </a>
+  ))}
+</div>
+
+<style>
+  .kacheln {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(16px, 2.5vw, 32px);
+  }
+  @media (max-width: 760px) {
+    .kacheln {
+      grid-template-columns: 1fr;
+    }
+  }
+  .kategorie {
+    text-decoration: none;
+    display: block;
+  }
+  .bild {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--flaeche);
+    margin-bottom: 18px;
+  }
+  .bild :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.85);
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.5s;
+  }
+  .kategorie:hover .bild :global(img) {
+    transform: scale(1.04);
+    filter: saturate(1);
+  }
+  .nummer {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    color: var(--akzent);
+  }
+  h3 {
+    margin: 4px 0 2px;
+  }
+  .kategorie:hover h3 {
+    color: var(--akzent);
+  }
+  p {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+</style>

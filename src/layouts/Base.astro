@@ -1,0 +1,108 @@
+---
+import '../styles/global.css';
+import { url } from '../lib/url';
+import { kontakt } from '../data/site';
+
+interface Props {
+  titel?: string;
+  beschreibung?: string;
+}
+
+const { titel, beschreibung = 'Carsten Wippermann, Objektemacher aus Melle. Lichtobjekte aus Metall, Glas und Licht, Besteckkunst und Plastiken.' } = Astro.props;
+const seitentitel = titel ? `${titel} · Carsten Wippermann` : 'Carsten Wippermann · Metall Glas Licht Kunst';
+const aktuell = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
+
+const navigation = [
+  { href: '/vita', text: 'Vita' },
+  { href: '/galerie', text: 'Galerie' },
+  { href: '/ausstellungen', text: 'Ausstellungen' },
+  { href: '/kontakt', text: 'Kontakt' },
+];
+const istAktiv = (href: string) => aktuell === href || aktuell.startsWith(href + '/');
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <script is:inline>document.documentElement.classList.add('js')</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seitentitel}</title>
+    <meta name="description" content={beschreibung} />
+    <meta name="theme-color" content="#1b1c1e" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:title" content={seitentitel} />
+    <meta property="og:description" content={beschreibung} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <header class="kopf">
+      <div class="kopf-innen">
+        <a class="marke" href={url('/')}>Carsten Wippermann</a>
+        <button class="menue-knopf" aria-expanded="false" aria-controls="navigation" aria-label="Menü öffnen">
+          <span></span><span></span>
+        </button>
+        <nav id="navigation" class="navigation">
+          {navigation.map((n) => (
+            <a href={url(n.href)} aria-current={istAktiv(n.href) ? 'page' : undefined}>{n.text}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="fuss">
+      <div class="fuss-innen">
+        <div>
+          <p class="fuss-name">Carsten Wippermann</p>
+          <p>Objektemacher · Metall Glas Licht Kunst</p>
+        </div>
+        <div>
+          <p>{kontakt.strasse}<br />{kontakt.ort}</p>
+        </div>
+        <div>
+          <p>
+            {kontakt.telefon.map((t) => (<><a href={t.href}>{t.anzeige}</a><br /></>))}
+            <a href={`mailto:${kontakt.email}`}>{kontakt.email}</a>
+          </p>
+        </div>
+        <nav class="fuss-links" aria-label="Rechtliches">
+          <a href={url('/impressum')}>Impressum</a>
+          <a href={url('/datenschutz')}>Datenschutz</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const knopf = document.querySelector<HTMLButtonElement>('.menue-knopf')!;
+      knopf.addEventListener('click', () => {
+        const offen = document.body.classList.toggle('menue-offen');
+        knopf.setAttribute('aria-expanded', String(offen));
+        knopf.setAttribute('aria-label', offen ? 'Menü schließen' : 'Menü öffnen');
+      });
+
+      // Elemente beim Scrollen sanft einblenden.
+      const beobachter = new IntersectionObserver(
+        (eintraege) => {
+          for (const e of eintraege) {
+            if (e.isIntersecting) {
+              e.target.classList.add('sichtbar');
+              beobachter.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: '0px 0px -8% 0px' },
+      );
+      document.querySelectorAll('.einblenden').forEach((el) => beobachter.observe(el));
+
+      const kopf = document.querySelector('.kopf')!;
+      const scroll = () => kopf.classList.toggle('gescrollt', window.scrollY > 8);
+      scroll();
+      window.addEventListener('scroll', scroll, { passive: true });
+    </script>
+  </body>
+</html>

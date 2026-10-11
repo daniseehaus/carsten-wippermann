@@ -1,0 +1,16 @@
+{
+  "name": "carsten-wippermann",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "bilder": "node scripts/bilder-import.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.3.8",
+    "photoswipe": "^5.4.4",
+    "sharp": "^0.35.5"
+  }
+}

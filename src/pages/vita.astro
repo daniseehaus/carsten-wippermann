@@ -1,0 +1,100 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { kategorien, slogan } from '../data/site';
+import { url } from '../lib/url';
+import portrait from '../assets/seiten/portrait.jpg';
+import lichtobjekt from '../assets/seiten/lichtobjekt.jpg';
+---
+
+<Base titel="Vita" beschreibung="Carsten Wippermann, geboren 1964, seit 1998 freischaffender Künstler in Melle-Insingdorf.">
+  <section class="seitenkopf">
+    <div class="inhalt vita">
+      <div class="portrait einblenden">
+        <Image src={portrait} alt="Carsten Wippermann" width={900} quality={82} loading="eager" />
+      </div>
+      <div class="einblenden">
+        <span class="ueberzeile">Vita</span>
+        <h1>Carsten Wippermann</h1>
+        <p>1964 in Bunderhammrich (Leer) geboren.</p>
+        <p>1986 begann Carsten Wippermann aus Melle-Insingdorf in seiner Freizeit, Kunstobjekte aus Glas zu entwerfen und anzufertigen. Durch seine handwerkliche Berufstätigkeit hatte er einen besonderen Bezug zu Metall. Er erkannte, dass sich Glas und Blech mit Ausschnitten ideal mit Licht verbinden lassen, und erfand seine eigene Technik.</p>
+        <p>1998 entschloss er sich, vorwiegend als freischaffender Künstler zu arbeiten.</p>
+        <blockquote class="zitat">
+          „{slogan} Ein Blick in die illuminierte Welt, in die Flora und Fauna und auf den Schrotthaufen inspiriert mich.“
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  {kategorien.map((k, i) => (
+    <section class="abschnitt">
+      <div class="inhalt werkgruppe einblenden">
+        <div>
+          <span class="ueberzeile">0{i + 1}</span>
+          <h2>{k.titel}</h2>
+        </div>
+        <div>
+          {k.text.map((absatz) => <p class="leise">{absatz}</p>)}
+          {k.slug === 'lichtobjekte' && (
+            <>
+              <blockquote class="zitat">„Ich versuche das Licht als physikalisches Medium zu sehen und als künstlerisches Material einzusetzen.“</blockquote>
+              <figure class="lichtbild">
+                <Image src={lichtobjekt} alt="Lichtobjekt mit Musikermotiv an einer beleuchteten Wand" width={1100} quality={80} />
+              </figure>
+              <blockquote class="zitat">
+                „Besucher von Wippermanns Ausstellungen werden in eine eigentümliche Stimmung versetzt, die die Installationen in ihrer Material-Kombination und ihrer kompositorischen Ausstrahlung erzeugen.“
+                <footer>Jutta Wasels, Niedermehnen 2004</footer>
+              </blockquote>
+            </>
+          )}
+          <a class="knopf" href={url(`/galerie/${k.slug}`)}>Zur Galerie {k.titel}</a>
+        </div>
+      </div>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .vita {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(28px, 6vw, 88px);
+    align-items: start;
+  }
+  .portrait {
+    position: sticky;
+    top: calc(var(--kopf-hoehe) + 24px);
+  }
+  .portrait :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+  }
+  .werkgruppe {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: clamp(20px, 5vw, 72px);
+    padding-top: clamp(40px, 6vw, 72px);
+    border-top: 1px solid var(--linie);
+  }
+  .werkgruppe .zitat {
+    margin: 2rem 0;
+  }
+  .lichtbild {
+    margin: 2rem 0;
+  }
+  .werkgruppe .knopf {
+    margin-top: 0.5rem;
+  }
+  @media (max-width: 760px) {
+    .vita,
+    .werkgruppe {
+      grid-template-columns: 1fr;
+    }
+    .portrait {
+      position: static;
+      max-width: 420px;
+    }
+  }
+</style>
