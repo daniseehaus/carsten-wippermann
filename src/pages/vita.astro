@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import { kategorien, slogan } from '../data/site';
 import { url } from '../lib/url';
 import portrait from '../assets/seiten/portrait.jpg';
-import lichtobjekt from '../assets/seiten/lichtobjekt.jpg';
+import pSpiegel from '../assets/seiten/p-spiegel.jpg';
 ---
 
 <Base titel="Vita" beschreibung="Carsten Wippermann, geboren 1964, seit 1998 freischaffender Künstler in Melle-Insingdorf.">
@@ -39,7 +39,7 @@ import lichtobjekt from '../assets/seiten/lichtobjekt.jpg';
             <>
               <blockquote class="zitat">„Ich versuche das Licht als physikalisches Medium zu sehen und als künstlerisches Material einzusetzen.“</blockquote>
               <figure class="lichtbild">
-                <Image src={lichtobjekt} alt="Lichtobjekt mit Musikermotiv an einer beleuchteten Wand" width={1100} quality={80} />
+                <Image src={pSpiegel} alt="Carsten Wippermann im Spiegel eines Lichtobjekts mit Gesichtsprofilen" width={1100} quality={80} />
               </figure>
               <blockquote class="zitat">
                 „Besucher von Wippermanns Ausstellungen werden in eine eigentümliche Stimmung versetzt, die die Installationen in ihrer Material-Kombination und ihrer kompositorischen Ausstrahlung erzeugen.“
@@ -83,6 +83,13 @@ import lichtobjekt from '../assets/seiten/lichtobjekt.jpg';
   }
   .lichtbild {
     margin: 2rem 0;
+  }
+  /* Ausschnitt um Carsten im Spiegel */
+  .lichtbild :global(img) {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    object-position: 50% 32%;
   }
   .werkgruppe .knopf {
     margin-top: 0.5rem;
